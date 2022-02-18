@@ -48,7 +48,6 @@ class ReportMaker_9000:
 
     def _create_report_body(self, response):
         r_json = response
-        # r_json = consts.RESPONSE_EXAMPLE
         report_body = ""
         for idx, log in enumerate(r_json['worklog']):
             # Ticket Head
@@ -69,7 +68,7 @@ class ReportMaker_9000:
 
     def _generate_response(self, jira):
         date = self._get_date()
-        return requests.post(
+        response = requests.post(
             url=consts.URL,
             data={
                 "jiraDate": date,
@@ -80,6 +79,10 @@ class ReportMaker_9000:
                 "atlassianToken": consts.ATLASIAN_TOKEN
             }
         )
+        if 'worklog' not in response.text:
+            raise Exception("Oh shit shit shit!, Ok .. umm, I can fix this",
+                            response.text)
+        return response
 
     def _combine_jiras(self):
         response_web = self._generate_response(consts.SCANDIWEB).json()
