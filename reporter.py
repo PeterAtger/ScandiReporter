@@ -2,8 +2,10 @@ from datetime import datetime, timedelta
 import requests
 from calendar import monthrange
 from humanfriendly import format_timespan
+from pathlib import Path
 import pyperclip as pc
 import animation
+import json
 import consts
 from log_date_picker import LogDatePicker
 
@@ -68,6 +70,10 @@ class ReportMaker_9000:
 
     def _generate_response(self, jira):
         date = self._get_date()
+        abs_path = str(Path(__file__).parent)
+        with open(abs_path+'/auth.json') as f:
+            auth = json.load(f)
+
         response = requests.post(
             url=consts.URL,
             data={
@@ -76,9 +82,10 @@ class ReportMaker_9000:
                 "token": jira['token'],
                 "jiraWorklogUsername": consts.TEMPO_ID,
                 "jiraEmail": "peter.atef@scandiweb.com",
-                "atlassianToken": consts.ATLASIAN_TOKEN
+                "atlassianToken": auth["Atlassian_token"]
             }
         )
+
         if 'worklog' not in response.text:
             raise Exception("Oh shit shit shit!, Ok .. umm, I can fix this",
                             response.text)

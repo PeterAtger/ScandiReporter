@@ -1,6 +1,5 @@
 # ATLASIAN INFO
 URL = 'https://statusupdate.i.scandiweb.com/jira/buildReport'
-ATLASIAN_TOKEN = "tOZ64RMexurtRd3fDl7RD82E"
 TEMPO_ID = "61538336c7bea40069de00cc"
 EMAIL = "peter.atef@scandiweb.com"
 SCANDIWEB = {
