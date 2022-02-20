@@ -12,6 +12,7 @@ from log_date_picker import LogDatePicker
 
 class ReportMaker_9000:
     _date = ''
+    _time_spent = 0
 
     def _get_date(self, format=consts.GET_DATE_DEFAULT):
         year, month, day = self._date.split('-')
@@ -33,25 +34,30 @@ class ReportMaker_9000:
         if format == consts.GET_DATE_TOMORROW:
             return f'{tom_day}: {tom_date}.{tom_month}.{tom_year}'
 
+    def _update_time(self, time_in_seconds):
+        self._time_spent += time_in_seconds
+
     def _create_report_head(self):
         greeting = "Hello team,\n\n"
         day_log = "Done Today: "
-        day_log += '{} : {}\n\n'.format(self._get_date(consts.GET_DATE_DAY),
-                                        self._get_date(consts.GET_DATE_LOGGABLE))
+        day_log += '{}: {}\n\n'.format(self._get_date(consts.GET_DATE_DAY),
+                                       self._get_date(consts.GET_DATE_LOGGABLE))
 
         return greeting + day_log
 
     def _create_report_end(self):
         pending = 'Pending Tasks: {}\n\n'.format(
             self._get_date(format=consts.GET_DATE_TOMORROW))
-        regards = "Best Regards, \n"
+        time_spent = f'Time spent: {format_timespan(self._time_spent)}'
+        regards = "\n\nBest Regards, \n"
 
-        return pending + regards
+        return pending + time_spent + regards
 
     def _create_report_body(self, response):
         r_json = response
         report_body = ""
         for idx, log in enumerate(r_json['worklog']):
+            self._update_time(log['timeSpentSeconds'])
             # Ticket Head
             report_body += '{}. - '.format(idx+1)
             report_body += log['issue']['name']
